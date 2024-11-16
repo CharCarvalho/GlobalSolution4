@@ -30,7 +30,7 @@ jobs:
       - name: Download Artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: java-gs2-api
+          name: global-solution-2
       - name: Deploy to Azure App Services
         uses: azure/webapps-deploy@v3
         with:
