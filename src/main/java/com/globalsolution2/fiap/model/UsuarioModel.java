@@ -1,8 +1,17 @@
 package com.globalsolution2.fiap.model;
 
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,7 +27,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "tb_usuario")
-public class UsuarioModel {
+public class UsuarioModel implements UserDetails{
 	
 	 	@Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,9 +45,61 @@ public class UsuarioModel {
 
 	    @Column(name = "nm_email", nullable = false, length = 300)
 	    private String nmEmail;
+	    
+	    @Enumerated(EnumType.STRING)
+	    @Column(name = "role")
+	    private UsuarioRole role;
+	    
+	    public UsuarioModel(String nmUsuario, String nmLogin, String nmSenha, String nmEmail, UsuarioRole role) {
+	    	this.nmUsuario = nmUsuario;
+	    	this.nmLogin = nmLogin;
+	    	this.nmSenha = nmSenha;
+	    	this.nmEmail = nmEmail;
+	    	this.role = role;
+	    	
+	    }
 
-	    @Column(name = "is_adm", nullable = false)
-	    private boolean isAdm;
+		@Override
+		public Collection<? extends GrantedAuthority> getAuthorities() {
+			if(this.role == UsuarioRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+			else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+			
+		}
+
+		@Override
+		public String getPassword() {
+			return nmSenha;
+		}
+
+		@Override
+		public String getUsername() {
+			return nmLogin;
+		}
+
+		@Override
+		public boolean isAccountNonExpired() {
+			// TODO Auto-generated method stub
+			return true;
+		}
+
+		@Override
+		public boolean isAccountNonLocked() {
+			// TODO Auto-generated method stub
+			return true;
+		}
+
+		@Override
+		public boolean isCredentialsNonExpired() {
+			// TODO Auto-generated method stub
+			return true;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		
 
 
 }
