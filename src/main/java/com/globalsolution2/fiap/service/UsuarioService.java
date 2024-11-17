@@ -37,7 +37,6 @@ public class UsuarioService {
             usuario.setNmLogin(usuarioDetails.getNmLogin());
             usuario.setNmSenha(usuarioDetails.getNmSenha());
             usuario.setNmEmail(usuarioDetails.getNmEmail());
-            usuario.setAdm(usuarioDetails.isAdm());
             return usuarioRepository.save(usuario);
         });
     }
