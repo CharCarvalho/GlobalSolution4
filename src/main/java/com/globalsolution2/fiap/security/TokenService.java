@@ -26,6 +26,7 @@ public class TokenService {
 			String token = JWT.create()
 					.withIssuer("global-solution-2")
 					.withSubject(user.getNmLogin())
+					.withClaim("idUsuario", user.getIdUsuario())
 					.withExpiresAt(genExpirationData())
 					.sign(algorithm);
 			
