@@ -21,23 +21,24 @@ public class SecurityConfig {
 	@Autowired
 	SecurityFilter securityFilter;
 	
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity
-				.csrf(csrf -> csrf.disable())
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.csrf(csrf -> csrf.disable()) // Desabilita CSRF, já que você está usando tokens JWT
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Define que a aplicação não mantém sessão
 				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-						.requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-						.requestMatchers(HttpMethod.GET, "/usuarios", "/perguntas", "/respostas").permitAll()
-						.requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasAnyRole("USER", "ADMIN")
-						.requestMatchers(HttpMethod.POST, "/perguntas", "/respostas").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/perguntas", "/respostas").hasRole("ADMIN")
-						.anyRequest().authenticated()
-						)
-				.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+						.requestMatchers(HttpMethod.POST, "/auth/login").permitAll() // Permite acesso ao login sem autenticação
+						.requestMatchers(HttpMethod.POST, "/auth/register").permitAll() // Permite acesso ao registro sem autenticação
+						.requestMatchers(HttpMethod.GET, "/usuarios", "/perguntas", "/respostas").permitAll() // Acesso público a essas rotas
+						.requestMatchers(HttpMethod.GET, "/usuarios/{id}").authenticated() // Apenas usuários autenticados podem acessar
+						.requestMatchers(HttpMethod.POST, "/perguntas", "/respostas").hasRole("ADMIN") // Apenas ADMIN pode postar perguntas e respostas
+						.requestMatchers(HttpMethod.PUT, "/perguntas", "/respostas").hasRole("ADMIN") // Apenas ADMIN pode atualizar perguntas e respostas
+						.anyRequest().authenticated() // Todas as outras requisições precisam de autenticação
+				)
+				.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class) // Adiciona o filtro de segurança antes do padrão
 				.build();
 	}
+	
 
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
