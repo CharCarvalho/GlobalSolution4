@@ -29,8 +29,8 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.POST, "/auth/login").permitAll() // Permite acesso ao login sem autenticação
 						.requestMatchers(HttpMethod.POST, "/auth/register").permitAll() // Permite acesso ao registro sem autenticação
-						.requestMatchers(HttpMethod.GET, "/usuarios", "/perguntas", "/respostas").permitAll() // Acesso público a essas rotas
-						.requestMatchers(HttpMethod.GET, "/usuarios/{id}").authenticated() // Apenas usuários autenticados podem acessar
+						.requestMatchers(HttpMethod.GET, "/").permitAll()
+						.requestMatchers(HttpMethod.GET, "/usuarios", "/usuarios/**", "/perguntas", "/respostas").permitAll() // Acesso público a essas rotas // Apenas usuários autenticados podem acessar
 						.requestMatchers(HttpMethod.POST, "/perguntas", "/respostas").hasRole("ADMIN") // Apenas ADMIN pode postar perguntas e respostas
 						.requestMatchers(HttpMethod.PUT, "/perguntas", "/respostas").hasRole("ADMIN") // Apenas ADMIN pode atualizar perguntas e respostas
 						.anyRequest().authenticated() // Todas as outras requisições precisam de autenticação
